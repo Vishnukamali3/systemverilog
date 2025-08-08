@@ -1,0 +1,60 @@
+module d_flip_flop(d,q,clk,reset);
+  input wire d,clk,reset;
+  output reg q;
+  always@(posedge clk or posedge reset)
+    begin
+      if(reset)
+        q<=1'b0;
+      else
+        q<=d;
+    end
+endmodule
+
+
+interface inter;
+  logic d;
+  logic clk;
+  logic reset;
+  logic q;
+endinterface
+module tb;
+  inter u1();
+  d_flip_flop DUT(.d(u1.d),.q(u1.q),.clk(u1.clk),.reset(u1.reset));
+  initial
+    begin
+      u1.clk=0;
+      forever #5 u1.clk=~u1.clk;
+    end
+  initial
+    begin
+      $monitor("time=%t,reset=%b,clk=%b,d=%b,q=%b",$time,u1.reset,u1.clk,u1.d,u1.q);
+      u1.reset=0;u1.d=0;#10;
+      u1.reset=0;u1.d=1;#10;
+      u1.reset=0;u1.d=0;#10;
+      u1.reset=0;u1.d=1;#10;
+      u1.reset=1;u1.d=0;#10;
+      u1.reset=1;u1.d=1;#10;
+      u1.reset=1;u1.d=0;#10;
+      u1.reset=1;u1.d=1;#10;
+      $finish;
+    end
+endmodule
+
+
+
+     0,reset=0,clk=0,d=0,q=x
+# time=                   5,reset=0,clk=1,d=0,q=0
+# time=                  10,reset=0,clk=0,d=1,q=0
+# time=                  15,reset=0,clk=1,d=1,q=1
+# time=                  20,reset=0,clk=0,d=0,q=1
+# time=                  25,reset=0,clk=1,d=0,q=0
+# time=                  30,reset=0,clk=0,d=1,q=0
+# time=                  35,reset=0,clk=1,d=1,q=1
+# time=                  40,reset=1,clk=0,d=0,q=0
+# time=                  45,reset=1,clk=1,d=0,q=0
+# time=                  50,reset=1,clk=0,d=1,q=0
+# time=                  55,reset=1,clk=1,d=1,q=0
+# time=                  60,reset=1,clk=0,d=0,q=0
+# time=                  65,reset=1,clk=1,d=0,q=0
+# time=                  70,reset=1,clk=0,d=1,q=0
+# time=                  75,reset=1,clk=1,d=1,q=0 
