@@ -1,0 +1,97 @@
+module full_adder(a,b,c,sum,carry);
+  input a,b,c;
+  output sum,carry;
+  assign sum=a^b^c;
+  assign carry=a&b|b&c|c&a;
+endmodule
+interface inter();
+  logic a;
+  logic b;
+  logic c;
+  logic sum;
+  logic carry;
+endinterface
+
+
+
+class generator;
+  logic a;
+  logic b;
+  logic c;
+  mailbox mbx;
+  integer i;
+  task run();
+    for(i=0;i<8;i++)
+      begin
+        {a,b,c}=i;
+        mbx.put({a,b,c});
+        $display("generated test cases :a=%b,b=%b,c=%b",a,b,c);
+        #20;
+      end
+  endtask
+endclass
+class driver;
+  virtual inter vif;
+  mailbox mbx;
+  integer i;
+  task run();
+    for(i=0;i<8;i=i+1)
+      begin
+        logic [2:0]temp;
+        logic a,b,c;
+        mbx.get(temp);
+        a=temp[2];
+        b=temp[1];
+        c=temp[0];
+        vif.a=a;
+        vif.b=b;
+        vif.c=c;
+        #10;
+        $display("driver applied:a=%b,b=%b,c=%b,sum=%b,carry=%b",a,b,c,vif.sum,vif.carry);
+      end
+  endtask
+endclass
+module tb;
+  inter aif();
+  full_adder u1(.a(aif.a),.b(aif.b),.c(aif.c),.sum(aif.sum),.carry(aif.carry));
+  generator gen;
+  driver div;
+  mailbox mbx;
+  initial
+    begin
+      gen=new();
+      div=new();
+      mbx=new();
+      gen.mbx=mbx;
+      div.mbx=mbx;
+      div.vif=aif;
+      fork
+        gen.run();
+        div.run();
+      join
+    end
+endmodule
+
+
+
+
+
+
+generated test cases :a=0,b=0,c=0
+driver applied:a=0,b=0,c=0,sum=0,carry=0
+generated test cases :a=0,b=0,c=1
+driver applied:a=0,b=0,c=1,sum=1,carry=0
+generated test cases :a=0,b=1,c=0
+driver applied:a=0,b=1,c=0,sum=1,carry=0
+generated test cases :a=0,b=1,c=1
+driver applied:a=0,b=1,c=1,sum=0,carry=1
+generated test cases :a=1,b=0,c=0
+driver applied:a=1,b=0,c=0,sum=1,carry=0
+generated test cases :a=1,b=0,c=1
+driver applied:a=1,b=0,c=1,sum=0,carry=1
+generated test cases :a=1,b=1,c=0
+driver applied:a=1,b=1,c=0,sum=0,carry=1
+generated test cases :a=1,b=1,c=1
+driver applied:a=1,b=1,c=1,sum=1,carry=1
+        
+    
