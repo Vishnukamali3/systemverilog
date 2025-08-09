@@ -1,0 +1,79 @@
+module half_adder(a,b,s,c);
+  input a,b;
+  output s,c;
+  assign s=a^b;
+  assign c=a&b;
+endmodule
+interface inter();
+  logic a;
+  logic b;
+  logic s;
+  logic c;
+endinterface
+
+
+class generator;
+  logic a;
+  logic b;
+  mailbox mbx;
+  integer i;
+  task run();
+    for(i=0;i<4;i=i+1)
+      begin
+        {a,b}=i;
+        #10;
+        mbx.put({a,b});
+        $display("generator applied a=%b,b=%b",a,b);
+        #20;
+      end
+  endtask
+endclass
+class driver;
+  virtual inter vif;
+  mailbox mbx;
+  task run();
+     repeat (4) begin
+    logic [1:0]temp;
+    logic a,b;
+       mbx.get(temp);
+       a=temp[1];
+       b=temp[0];
+       vif.a=a;
+       vif.b=b;
+       #20;
+       $display("driver applied a=%b,b=%b,s=%b,c=%b",a,b,vif.s,vif.c);
+    end
+  endtask
+endclass
+   
+module tb;
+  inter aif();
+  half_adder u1(.a(aif.a),.b(aif.b),.s(aif.s),.c(aif.c));
+  generator gen;
+  driver div;
+  mailbox mbx;
+  initial
+    begin
+      gen=new();
+      div=new();
+      mbx=new();
+      gen.mbx=mbx;
+      div.mbx=mbx;
+      div.vif=aif;
+      fork
+        gen.run();
+        div.run();
+      join
+    end
+endmodule
+
+
+
+generator applied a=0,b=0
+driver applied a=0,b=0,s=0,c=0
+generator applied a=0,b=1
+driver applied a=0,b=1,s=1,c=0
+generator applied a=1,b=0
+driver applied a=1,b=0,s=1,c=0
+generator applied a=1,b=1
+driver applied a=1,b=1,s=0,c=1
