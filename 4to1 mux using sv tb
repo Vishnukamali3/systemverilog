@@ -1,0 +1,210 @@
+// Code your design here
+module mux4to1(a,s,y);
+  input [3:0]a;
+  input [1:0]s;
+  output reg y;
+  always@(*) begin
+    case(s)
+      2'b00:y=a[0];
+      2'b01:y=a[1];
+      2'b10:y=a[2];
+      2'b11:y=a[3];
+    endcase
+  end
+endmodule
+interface inter;
+  logic [3:0]a;
+  logic [1:0]s;
+  logic y;
+endinterface
+  
+
+
+
+class generator;
+  logic [3:0]a;
+  logic [1:0]s;
+  mailbox mbx;
+  integer i;
+  task run();
+    for(i=0;i<64;i++)
+      begin
+        {a,s}=i;
+        mbx.put({a,s});
+        $display("generated applied a=%b,s=%b",a,s);
+        #20;
+      end
+  endtask
+endclass
+class driver;
+  virtual inter vif;
+  mailbox mbx;
+  integer i;
+  task run();
+    for(i=0;i<64;i++)
+      begin
+        logic [5:0]temp;
+        logic [3:0]a;
+        logic [1:0]s;
+        mbx.get(temp);
+        a=temp[5:2];
+        s=temp[1:0];
+        vif.a=a;
+        vif.s=s;
+        #10;
+        $display("driver applied a=%b,s=%b,y=%b",a,s,vif.y);
+      end
+  endtask
+endclass
+module tb;
+  inter aif();
+  mux4to1 u5(.a(aif.a),.s(aif.s),.y(aif.y));
+  generator gen;
+  driver div;
+  mailbox mbx;
+  initial
+    begin
+      gen=new();
+      div=new();
+      mbx=new();
+      gen.mbx=mbx;
+      div.mbx=mbx;
+      div.vif=aif;
+      fork
+        gen.run();
+        div.run();
+      join
+    end
+endmodule
+
+
+
+generated applied a=0000,s=00
+driver applied a=0000,s=00,y=0
+generated applied a=0000,s=01
+driver applied a=0000,s=01,y=0
+generated applied a=0000,s=10
+driver applied a=0000,s=10,y=0
+generated applied a=0000,s=11
+driver applied a=0000,s=11,y=0
+generated applied a=0001,s=00
+driver applied a=0001,s=00,y=1
+generated applied a=0001,s=01
+driver applied a=0001,s=01,y=0
+generated applied a=0001,s=10
+driver applied a=0001,s=10,y=0
+generated applied a=0001,s=11
+driver applied a=0001,s=11,y=0
+generated applied a=0010,s=00
+driver applied a=0010,s=00,y=0
+generated applied a=0010,s=01
+driver applied a=0010,s=01,y=1
+generated applied a=0010,s=10
+driver applied a=0010,s=10,y=0
+generated applied a=0010,s=11
+driver applied a=0010,s=11,y=0
+generated applied a=0011,s=00
+driver applied a=0011,s=00,y=1
+generated applied a=0011,s=01
+driver applied a=0011,s=01,y=1
+generated applied a=0011,s=10
+driver applied a=0011,s=10,y=0
+generated applied a=0011,s=11
+driver applied a=0011,s=11,y=0
+generated applied a=0100,s=00
+driver applied a=0100,s=00,y=0
+generated applied a=0100,s=01
+driver applied a=0100,s=01,y=0
+generated applied a=0100,s=10
+driver applied a=0100,s=10,y=1
+generated applied a=0100,s=11
+driver applied a=0100,s=11,y=0
+generated applied a=0101,s=00
+driver applied a=0101,s=00,y=1
+generated applied a=0101,s=01
+driver applied a=0101,s=01,y=0
+generated applied a=0101,s=10
+driver applied a=0101,s=10,y=1
+generated applied a=0101,s=11
+driver applied a=0101,s=11,y=0
+generated applied a=0110,s=00
+driver applied a=0110,s=00,y=0
+generated applied a=0110,s=01
+driver applied a=0110,s=01,y=1
+generated applied a=0110,s=10
+driver applied a=0110,s=10,y=1
+generated applied a=0110,s=11
+driver applied a=0110,s=11,y=0
+generated applied a=0111,s=00
+driver applied a=0111,s=00,y=1
+generated applied a=0111,s=01
+driver applied a=0111,s=01,y=1
+generated applied a=0111,s=10
+driver applied a=0111,s=10,y=1
+generated applied a=0111,s=11
+driver applied a=0111,s=11,y=0
+generated applied a=1000,s=00
+driver applied a=1000,s=00,y=0
+generated applied a=1000,s=01
+driver applied a=1000,s=01,y=0
+generated applied a=1000,s=10
+driver applied a=1000,s=10,y=0
+generated applied a=1000,s=11
+driver applied a=1000,s=11,y=1
+generated applied a=1001,s=00
+driver applied a=1001,s=00,y=1
+generated applied a=1001,s=01
+driver applied a=1001,s=01,y=0
+generated applied a=1001,s=10
+driver applied a=1001,s=10,y=0
+generated applied a=1001,s=11
+driver applied a=1001,s=11,y=1
+generated applied a=1010,s=00
+driver applied a=1010,s=00,y=0
+generated applied a=1010,s=01
+driver applied a=1010,s=01,y=1
+generated applied a=1010,s=10
+driver applied a=1010,s=10,y=0
+generated applied a=1010,s=11
+driver applied a=1010,s=11,y=1
+generated applied a=1011,s=00
+driver applied a=1011,s=00,y=1
+generated applied a=1011,s=01
+driver applied a=1011,s=01,y=1
+generated applied a=1011,s=10
+driver applied a=1011,s=10,y=0
+generated applied a=1011,s=11
+driver applied a=1011,s=11,y=1
+generated applied a=1100,s=00
+driver applied a=1100,s=00,y=0
+generated applied a=1100,s=01
+driver applied a=1100,s=01,y=0
+generated applied a=1100,s=10
+driver applied a=1100,s=10,y=1
+generated applied a=1100,s=11
+driver applied a=1100,s=11,y=1
+generated applied a=1101,s=00
+driver applied a=1101,s=00,y=1
+generated applied a=1101,s=01
+driver applied a=1101,s=01,y=0
+generated applied a=1101,s=10
+driver applied a=1101,s=10,y=1
+generated applied a=1101,s=11
+driver applied a=1101,s=11,y=1
+generated applied a=1110,s=00
+driver applied a=1110,s=00,y=0
+generated applied a=1110,s=01
+driver applied a=1110,s=01,y=1
+generated applied a=1110,s=10
+driver applied a=1110,s=10,y=1
+generated applied a=1110,s=11
+driver applied a=1110,s=11,y=1
+generated applied a=1111,s=00
+driver applied a=1111,s=00,y=1
+generated applied a=1111,s=01
+driver applied a=1111,s=01,y=1
+generated applied a=1111,s=10
+driver applied a=1111,s=10,y=1
+generated applied a=1111,s=11
+driver applied a=1111,s=11,y=1
+    
