@@ -1,0 +1,93 @@
+module full_subtractor(a,b,c,diff,borrow);
+  input a,b,c;
+  output diff,borrow;
+  assign diff=a^b^c;
+  assign borrow=(~a&c)|(~a&b)|(b&c);
+endmodule
+interface inter;
+  logic a;
+  logic b;
+  logic c;
+  logic diff;
+  logic borrow;
+endinterface
+
+class generator;
+  logic a;
+  logic b;
+  logic c;
+  mailbox mbx;
+  integer i;
+  task run();
+    for(i=0;i<8;i=i+1)
+      begin
+        {a,b,c}=i;
+        mbx.put({a,b,c});
+        #20;
+        $display("generator applied :a=%b,b=%b,c=%b",a,b,c);
+      end
+  endtask
+endclass
+class driver;
+  virtual inter vif;
+  mailbox mbx;
+  integer i;
+  task run();
+    for(i=0;i<8;i++)
+      begin
+        logic [2:0]temp;
+        logic a,b,c;
+        mbx.get(temp);
+        a=temp[2];
+        b=temp[1];
+        c=temp[0];
+        vif.a=a;
+        vif.b=b;
+        vif.c=c;
+        #20;
+        $display("driver applied a=%b,b=%b,c=%b,diff=%b,borrow=%b",a,b,c,vif.diff,vif.borrow);
+      end
+  endtask
+endclass
+module tb;
+  inter aif();
+  full_subtractor u1(.a(aif.a),.b(aif.b),.c(aif.c),.diff(aif.diff),.borrow(aif.borrow));
+  generator gen;
+  driver div;
+  mailbox mbx;
+  initial
+    begin
+      gen=new();
+      div=new();
+      mbx=new();
+      gen.mbx=mbx;
+      div.mbx=mbx;
+      div.vif=aif;
+      fork
+        gen.run();
+        div.run();
+      join
+    end
+endmodule
+
+
+
+ generator applied :a=0,b=0,c=0
+# KERNEL: driver applied a=0,b=0,c=0,diff=0,borrow=0
+# KERNEL: generator applied :a=0,b=0,c=1
+# KERNEL: driver applied a=0,b=0,c=1,diff=1,borrow=1
+# KERNEL: generator applied :a=0,b=1,c=0
+# KERNEL: driver applied a=0,b=1,c=0,diff=1,borrow=1
+# KERNEL: generator applied :a=0,b=1,c=1
+# KERNEL: driver applied a=0,b=1,c=1,diff=0,borrow=1
+# KERNEL: generator applied :a=1,b=0,c=0
+# KERNEL: driver applied a=1,b=0,c=0,diff=1,borrow=0
+# KERNEL: generator applied :a=1,b=0,c=1
+# KERNEL: driver applied a=1,b=0,c=1,diff=0,borrow=0
+# KERNEL: generator applied :a=1,b=1,c=0
+# KERNEL: driver applied a=1,b=1,c=0,diff=0,borrow=0
+# KERNEL: generator applied :a=1,b=1,c=1
+# KERNEL: driver applied a=1,b=1,c=1,diff=1,borrow=1
+    
+  
+ 
