@@ -1,0 +1,96 @@
+module demux4t01(din,sel,y);
+  input din;
+  input [1:0]sel;
+  output reg  [3:0]y;
+  always@(*)
+    begin
+      y=4'b0000;
+      case(sel)
+        2'b00:y[0]=din;
+        2'b01:y[1]=din;
+        2'b10:y[2]=din;
+        2'b11:y[3]=din;
+      endcase
+    end
+endmodule
+interface inter;
+  logic din;
+  logic [1:0]sel;
+  logic [3:0]y;
+endinterface
+
+
+class generator;
+  logic din;
+  logic [1:0]sel;
+  mailbox mbx;
+  integer i;
+  task run();
+    for(i=0;i<8;i++)
+      begin
+        {din,sel}=i;
+        mbx.put({din,sel});
+        $display("generator applied din=%b,sel=%b",din,sel);
+        #20;
+      end
+  endtask
+endclass
+class driver;
+  virtual inter vif;
+  mailbox mbx;
+  integer i;
+  task run();
+    for(i=0;i<8;i++)
+      begin
+        logic [2:0]temp;
+        logic din;
+        logic [1:0]sel;
+        mbx.get(temp);
+        din=temp[2];
+        sel=temp[1:0];
+        vif.din=din;
+        vif.sel=sel;
+        #10;
+        $display("driver applied din=%b,sel=%b,y=%b",din,sel,vif.y);
+      end
+  endtask
+endclass
+
+module tb;
+  inter aif();
+  demux4t01 u1(.din(aif.din),.sel(aif.sel),.y(aif.y));
+  generator gen;
+  driver div;
+  mailbox mbx;
+  initial
+    begin
+      gen=new();
+      div=new();
+      mbx=new();
+      gen.mbx=mbx;
+      div.mbx=mbx;
+      div.vif=aif;
+      fork
+        gen.run();
+        div.run();
+      join
+    end
+endmodule
+
+
+generator applied din=0,sel=00
+driver applied din=0,sel=00,y=0000
+generator applied din=0,sel=01
+driver applied din=0,sel=01,y=0000
+generator applied din=0,sel=10
+driver applied din=0,sel=10,y=0000
+generator applied din=0,sel=11
+driver applied din=0,sel=11,y=0000
+generator applied din=1,sel=00
+driver applied din=1,sel=00,y=0001
+generator applied din=1,sel=01
+driver applied din=1,sel=01,y=0010
+generator applied din=1,sel=10
+driver applied din=1,sel=10,y=0100
+generator applied din=1,sel=11
+driver applied din=1,sel=11,y=1000
