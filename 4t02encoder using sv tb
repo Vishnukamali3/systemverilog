@@ -1,0 +1,107 @@
+module encoder4to2(din,y);
+  input [3:0]din;
+  output reg [1:0]y;
+  always@(*) begin
+    case(din)
+        4'b0001:y=2'b00;
+        4'b0010:y=2'b01;
+        4'b0100:y=2'b10;
+        4'b1000:y=2'b11;
+        default:y=2'bxx;
+      endcase
+  end
+endmodule
+interface inter;
+  logic [3:0]din;
+  logic [1:0]y;
+endinterface
+
+
+class generator;
+  logic [3:0]din;
+  mailbox mbx;
+  integer i;
+  task run();
+    for(i=0;i<16;i++)
+    begin
+      din=i;
+      mbx.put({din});
+      $display("generator applied din=%b",din);
+      #20;
+    end
+  endtask
+endclass
+class driver;
+  virtual inter vif;
+  mailbox mbx;
+  integer i;
+  task run();
+    for(i=0;i<16;i++)
+      begin
+        logic [3:0]temp;
+        logic [3:0]din;
+        mbx.get(temp);
+        din=temp[3:0];
+        vif.din=din;
+        #10;
+         $display("driver applied din=%b,y=%b",din,vif.y);
+      end
+  endtask
+endclass
+module tb;
+  inter aif();
+  encoder4to2 u1(.din(aif.din),.y(aif.y));
+  generator gen;
+  driver div;
+  mailbox mbx;
+  initial
+    begin
+      gen=new();
+      div=new();
+      mbx=new();
+      gen.mbx=mbx;
+      div.mbx=mbx;
+      div.vif=aif;
+      fork
+        gen.run();
+        div.run();
+      join
+    end
+endmodule
+
+generator applied din=0000
+driver applied din=0000,y=xx
+generator applied din=0001
+driver applied din=0001,y=00
+generator applied din=0010
+driver applied din=0010,y=01
+generator applied din=0011
+driver applied din=0011,y=xx
+generator applied din=0100
+driver applied din=0100,y=10
+generator applied din=0101
+driver applied din=0101,y=xx
+generator applied din=0110
+driver applied din=0110,y=xx
+generator applied din=0111
+driver applied din=0111,y=xx
+generator applied din=1000
+driver applied din=1000,y=11
+generator applied din=1001
+driver applied din=1001,y=xx
+generator applied din=1010
+driver applied din=1010,y=xx
+generator applied din=1011
+driver applied din=1011,y=xx
+generator applied din=1100
+driver applied din=1100,y=xx
+generator applied din=1101
+driver applied din=1101,y=xx
+generator applied din=1110
+driver applied din=1110,y=xx
+generator applied din=1111
+driver applied din=1111,y=xx
+
+
+
+
