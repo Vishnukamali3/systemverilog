@@ -1,0 +1,30 @@
+class array;
+  int arr[8];
+  function new();
+    for(int i=0;i<8;i++)
+    begin
+      arr[i]=i;
+    end
+  endfunction
+endclass
+module tb;
+  array a;
+  initial
+    begin
+      a=new();
+      for(int i=0;i<8;i++) begin
+        $display("a[%0d]=%d",i,a.arr[i]);
+      end
+    end
+endmodule
+      
+
+
+          a[0]=          0
+# KERNEL: a[1]=          1
+# KERNEL: a[2]=          2
+# KERNEL: a[3]=          3
+# KERNEL: a[4]=          4
+# KERNEL: a[5]=          5
+# KERNEL: a[6]=          6
+# KERNEL: a[7]=          7
