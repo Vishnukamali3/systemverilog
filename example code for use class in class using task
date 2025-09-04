@@ -1,0 +1,19 @@
+class first;
+  int data=30;
+endclass
+class second;
+  first f;
+  task run();
+    f=new();
+  endtask
+endclass
+
+module tb;
+  second s;
+  initial
+    begin
+      s=new();
+      s.run();
+      $display("data=%d",s.f.data);
+    end
+endmodule
