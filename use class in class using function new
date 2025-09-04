@@ -1,0 +1,20 @@
+class first;
+  int data=30;
+endclass
+class second;
+  first f;
+  function new();
+    f=new();
+  endfunction
+endclass
+
+module tb;
+  second s;
+  initial
+    begin
+      s=new();
+      $display("data=%d",s.f.data);
+      s.f.data=50;
+      $display("data=%d",s.f.data);
+    end
+endmodule
