@@ -1,0 +1,13 @@
+module tb;
+  int a,b;
+  initial
+    begin
+      a=9;
+      b=6;
+      $display("a=%d b=%d",a,b);
+      b=a;
+      $display("a=%d b=%d",a,b);
+      a=30;
+      $display(" b=%d",b);
+    end
+endmodule
