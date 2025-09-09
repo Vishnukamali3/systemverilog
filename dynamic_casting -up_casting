@@ -1,0 +1,25 @@
+// Code your testbench here
+// or browse Examples
+//dynamic casting
+//up casting
+class ethernet_pkt;
+  int a;
+endclass
+
+
+class good_pkt extends ethernet_pkt;
+  int b;
+endclass
+
+
+module top;
+  ethernet_pkt eth_pkt;
+  good_pkt g_pkt;
+  bit y;
+  initial
+    begin
+      $cast(eth_pkt,g_pkt); //system task
+      y=$cast(eth_pkt,g_pkt); //system function
+      $display("y=%d",y);
+    end
+endmodule
