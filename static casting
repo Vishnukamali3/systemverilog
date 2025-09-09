@@ -1,0 +1,12 @@
+module top;
+  int x; //signed data type 32 bit
+  byte unsigned y; //unsigned data type 8bit
+  initial
+    begin
+      x=-15;
+      y=x;
+      $display("Y=%d",y);
+      y=byte'(x);
+      $display("Y=%d",y);
+    end
+endmodule
