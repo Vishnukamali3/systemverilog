@@ -1,0 +1,28 @@
+class ethernet_pkt;
+  int a;
+endclass
+
+
+class good_pkt extends ethernet_pkt;
+  int b;
+endclass
+
+
+module top;
+  ethernet_pkt eth_pkt;
+  good_pkt g_pkt;
+  bit y;
+  initial
+    begin
+      eth_pkt=new();
+      g_pkt=new();
+      $cast(g_pkt,eth_pkt); //system task
+      y=$cast(g_pkt,eth_pkt); //system function
+      $display("y=%d",y);
+    end
+endmodule
+
+
+Error: RUNTIME_0197 testbench.sv (23): Illegal conversion to object of class good_pkt from object of class ethernet_pkt.
+# KERNEL: Time: 0 ns,  Iteration: 0,  Instance: /top,  Process: @INITIAL#19_0@.
+# KERNEL: y=0
