@@ -1,0 +1,71 @@
+class apb_tx;
+  bit wr_rd=1;
+  rand bit [7:0]addr;
+  rand bit [31:0]data;
+  rand bit [3:0]sel;
+  function void print();
+    $display("wr_rd=%b",wr_rd);
+    $display("addr=%0h",addr);
+    $display("data=%0h",data);
+    $display("sel=%d",sel);
+  endfunction
+  
+  constraint sel_c{
+    sel inside {4'b0010};
+  }
+  /*constraint sel_c1{
+    sel inside { 4'b0010, 4'b0100, 4'b1000};}*/
+endclass
+module tb;
+  apb_tx tx=new();
+  initial begin
+    repeat (10) begin
+      tx.randomize();
+      tx.print();
+    end
+  end
+endmodule
+
+
+
+
+wr_rd=1
+# KERNEL: addr=e7
+# KERNEL: data=49d7df22
+# KERNEL: sel= 2
+# KERNEL: wr_rd=1
+# KERNEL: addr=e2
+# KERNEL: data=56bc4659
+# KERNEL: sel= 2
+# KERNEL: wr_rd=1
+# KERNEL: addr=ca
+# KERNEL: data=cafc69bc
+# KERNEL: sel= 2
+# KERNEL: wr_rd=1
+# KERNEL: addr=a0
+# KERNEL: data=69867559
+# KERNEL: sel= 2
+# KERNEL: wr_rd=1
+# KERNEL: addr=5
+# KERNEL: data=74817bc0
+# KERNEL: sel= 2
+# KERNEL: wr_rd=1
+# KERNEL: addr=eb
+# KERNEL: data=5329a5e0
+# KERNEL: sel= 2
+# KERNEL: wr_rd=1
+# KERNEL: addr=25
+# KERNEL: data=aefa8798
+# KERNEL: sel= 2
+# KERNEL: wr_rd=1
+# KERNEL: addr=4a
+# KERNEL: data=c3b56ade
+# KERNEL: sel= 2
+# KERNEL: wr_rd=1
+# KERNEL: addr=c5
+# KERNEL: data=30a1b9ab
+# KERNEL: sel= 2
+# KERNEL: wr_rd=1
+# KERNEL: addr=9
+# KERNEL: data=4c378f0d
+# KERNEL: sel= 2
