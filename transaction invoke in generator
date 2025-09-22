@@ -1,0 +1,58 @@
+class apb_tx;
+  rand bit wr_rd;
+  rand bit [7:0]addr;
+  rand bit [31:0]data;
+  rand bit [3:0]sel;
+  function void print(string thub);
+    $display(" [%0s] wr_rd=%b",thub,wr_rd);
+    $display("[%0s] addr=%0h",thub,addr);
+    $display("[%0s] data=%0h",thub,data);
+    $display("[%0s] sel=%d",thub,sel);
+  endfunction
+  
+  constraint sel_c{
+    sel inside {4'b0010,4'b0100,4'b1000,4'b1001,4'b0000};
+  }
+endclass
+
+class apb_gen;
+  apb_tx tx;
+  mailbox mbx;
+  task run();
+    repeat(5) begin
+      tx=new();
+      tx.randomize();
+      tx.print("apb_gen");
+      mbx.put(tx);
+    end
+  endtask
+endclass
+class apb_bfm;
+  apb_tx tx;
+  mailbox mbx;
+  task run();
+    repeat(5) begin
+      tx=new();
+      mbx.get(tx);
+      tx.print("apb_bfm");
+    end
+  endtask
+endclass
+
+
+module tb;
+  apb_gen gen;
+  apb_bfm bfm;
+  mailbox mbx;
+  initial begin
+    mbx=new();
+    gen=new();
+    bfm=new();
+    gen.mbx=mbx;
+    bfm.mbx=mbx;
+    fork
+      gen.run();
+      bfm.run();
+    join
+  end
+endmodule
