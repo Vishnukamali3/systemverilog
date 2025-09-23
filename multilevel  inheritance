@@ -1,0 +1,60 @@
+class parent;
+  int pdata=10;
+  function void pdisplay();
+    $display("pdata=%d",pdata);
+  endfunction
+endclass
+
+class child extends parent;
+  int cdata=15;
+  function void cdisplay();
+    $display("cdata=%d",cdata);
+  endfunction
+endclass
+
+class child1 extends parent;
+  int c1data=20;
+  function void c1display();
+    $display("c1data=%d",c1data);
+  endfunction
+endclass
+
+class child2 extends child;
+  int c2data=25;
+   function void c2display();
+     $display("c2data=%d",c2data);
+  endfunction
+endclass
+
+module tb;
+  child c;
+  child1 c1;
+  child2 c2;
+  initial
+    begin
+      c=new();
+      c1=new();
+      c2=new();
+      c.cdisplay();
+      c.pdisplay();
+      c1.c1display();
+      c1.pdisplay();
+      c2.c2display();
+      c2.cdisplay();
+      c2.pdisplay();
+      
+    end
+endmodule
+
+
+
+
+cdata=         15
+# KERNEL: pdata=         10
+# KERNEL: c1data=         20
+# KERNEL: pdata=         10
+# KERNEL: c2data=         25
+# KERNEL: cdata=         15
+# KERNEL: pdata=         10
+  
+    
