@@ -1,0 +1,42 @@
+class parent;
+  static int a=40;
+  static int b=30;
+  function void display();
+    $display("a=%d b=%d",a,b);
+  endfunction
+endclass
+
+class child extends parent;
+  int c=20;
+  function void cdisplay();
+    $display("C=%d",c);
+  endfunction
+endclass
+
+module tb;
+  child c1,c2;
+  initial begin
+    c1=new();
+    c2=new();
+    c1.display();
+    //c1.a=20;
+    //c2.b=10;
+    //c1.display();
+    //c2.display();
+    parent :: a=20;
+    parent :: b=10;
+    c1.display();
+    c2.display();
+    
+    
+  end
+endmodule
+
+
+
+
+
+//in static every handle shares same memory
+a=         40 b=         30
+# KERNEL: a=         20 b=         10
+# KERNEL: a=         20 b=         10
