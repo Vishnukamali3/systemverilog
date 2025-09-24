@@ -1,0 +1,43 @@
+class remote;
+  function void presspower();
+    $display("Default : No device is selected");
+             
+  endfunction
+endclass
+
+class fan extends remote;
+  function void presspower();
+    $display(" Fan on/off");
+  endfunction
+endclass
+
+class ac extends remote;
+  function void presspower();
+    $display(" ac on/off");
+  endfunction
+endclass
+
+class light extends remote;
+  function void presspower();
+    $display("light on/off");
+  endfunction
+endclass
+
+module tb;
+  remote device[3];
+  initial
+    begin
+      //polymorphism
+      //parent handle=child class
+      device[0]=fan :: new();
+      device[1]=ac :: new();
+      device[2]=light :: new();
+      foreach(device[i]) device[i].presspower;
+    end
+endmodule
+
+
+
+ Default : No device is selected
+# KERNEL: Default : No device is selected
+# KERNEL: Default : No device is selected
