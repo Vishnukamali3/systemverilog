@@ -1,0 +1,95 @@
+// Code your testbench here
+// or browse Examples
+class remote;
+  virtual function void presspower();
+    $display("Default : No device is selected");
+             
+  endfunction
+endclass
+
+class fan extends remote;
+  function void presspower();
+    $display(" Fan on/off");
+  endfunction
+endclass
+
+class ac extends remote;
+  /*function void presspower();
+    $display(" ac on/off");
+  endfunction*/
+endclass
+
+class light extends remote;
+  function void presspower();
+    $display("light on/off");
+  endfunction
+endclass
+
+module tb;
+  remote device[3];
+  initial
+    begin
+      //polymorphism
+      //parent handle=child class
+      device[0]=fan :: new();
+      device[1]=ac :: new();
+      device[2]=light :: new();
+      foreach(device[i]) device[i].presspower;
+    end
+endmodule
+
+
+Fan on/off
+# KERNEL: Default : No device is selected
+# KERNEL: light on/off
+
+//to overcome this problem
+
+
+
+
+// Code your testbench here
+// or browse Examples
+virtual class remote;
+  pure virtual function void presspower();
+    //$display("Default : No device is selected");
+             
+  //endfunction
+endclass
+
+class fan extends remote;
+  function void presspower();
+    $display(" Fan on/off");
+  endfunction
+endclass
+
+class ac extends remote;
+  function void presspower();
+    $display(" ac on/off");
+  endfunction
+endclass
+
+class light extends remote;
+  function void presspower();
+    $display("light on/off");
+  endfunction
+endclass
+
+module tb;
+  remote device[3];
+  initial
+    begin
+      //polymorphism
+      //parent handle=child class
+      device[0]=fan :: new();
+      device[1]=ac :: new();
+      device[2]=light :: new();
+      foreach(device[i]) device[i].presspower;
+    end
+endmodule
+
+
+
+Fan on/off
+# KERNEL:  ac on/off
+# KERNEL: light on/off
