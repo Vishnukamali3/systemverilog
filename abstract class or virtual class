@@ -1,0 +1,52 @@
+virtual class base;
+  int a=20;
+  int b=20;
+  function void display();
+    $display("a=%d b=%d",a,b);
+  endfunction
+endclass
+
+module tb;
+  base s;
+  initial begin
+    s=new();
+    s.display();
+    s.a=30;
+    s.b=40;
+    s.display();
+    
+  end
+endmodule
+     "Cannot instantiate abstract class: base."
+// solution for this problem is access the base property from child class(create)
+//below is the solution
+
+
+
+
+virtual class base;
+  int a=20;
+  int b=20;
+  function void display();
+    $display("a=%d b=%d",a,b);
+  endfunction
+endclass
+
+class sub extends base;
+endclass
+
+module tb;
+  sub s;
+  initial begin
+    s=new();
+    s.display();
+    s.a=30;
+    s.b=40;
+    s.display();
+    
+  end
+endmodule
+
+
+a=         20 b=         20
+# KERNEL: a=         30 b=         40
