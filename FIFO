@@ -1,0 +1,40 @@
+class lifo;
+  int intQ[$];
+  function void put(int a);
+    intQ.push_back(a);
+    $display("put data=%0d",a);
+  endfunction
+  
+  function void get(int a);
+    a=intQ.pop_front();
+    $display("get data=%0d",a);
+  endfunction
+endclass
+
+module tb;
+  lifo li;
+  int num;
+  initial begin
+    li=new();
+    repeat(5) begin
+      num=$urandom_range(0,10);
+      li.put(num);
+    end
+    repeat(5) begin
+      li.get(num);
+    end
+  end
+endmodule
+
+
+          put data=4
+# KERNEL: put data=8
+# KERNEL: put data=0
+# KERNEL: put data=3
+# KERNEL: put data=3
+# KERNEL: get data=4
+# KERNEL: get data=8
+# KERNEL: get data=0
+# KERNEL: get data=3
+# KERNEL: get data=3
+    
